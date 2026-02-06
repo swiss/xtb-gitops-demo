@@ -24,7 +24,6 @@ spring:
       idle-timeout: 300000 # maximum connection idle time (default: 600000ms = 10min)
       max-lifetime: 1800000 # maximum connection lifetime in the pool after close (default: 1800000ms = 30min, mariadb has 60min)
       keepalive-time: 600000 # less than max-lifetime using connection-test-query to probe the DB (default: 0ms == disabled)
-      connection-test-query: select 1 from dual # probe DB according to keepalive-time
   flyway:
     enabled: true
     url: jdbc:mariadb://mariadb:3306
