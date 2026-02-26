@@ -13,7 +13,7 @@ server:
 
 spring:
   datasource:
-    url: ${spring.flyway.url}/${spring.flyway.schemas}
+    url: ${spring.flyway.url}?currentSchema=${spring.flyway.schemas},public
     username: trustbroker
     password: ${STATECACHE_PASS}
     driverClassName: ${spring.flyway.driver-class-name}
@@ -24,14 +24,15 @@ spring:
       idle-timeout: 300000 # maximum connection idle time (default: 600000ms = 10min)
       max-lifetime: 1800000 # maximum connection lifetime in the pool after close (default: 1800000ms = 30min, mariadb has 60min)
       keepalive-time: 600000 # less than max-lifetime using connection-test-query to probe the DB (default: 0ms == disabled)
+      connection-test-query: select 1 # probe DB according to keepalive-time
   flyway:
     enabled: true
-    url: jdbc:mariadb://mariadb:3306
+    url: jdbc:postgresql://postgresql:5432/${spring.flyway.schemas}
     user: root
     password: ${STATECACHE_PASS}
-    schemas: TBSS16
-    driver-class-name: org.mariadb.jdbc.Driver
-    locations: [ classpath:db/migration/mariadb ]
+    schemas: tbss16
+    driver-class-name: org.postgresql.Driver
+    locations: [ classpath:db/migration/postgresql ]
     baselineOnMigrate: true # force upgrading XTB schema even though the database is not empty
 
 trustbroker:
@@ -118,7 +119,7 @@ trustbroker:
     oidc:
       issuer: "${trustbroker.config.issuer}" # iss claim setup
       perimeterUrl: "${trustbroker.config.perimeterUrl}/login/saml2/sso" # XTB OIDC federation forward
-      sessionMode: IN_DB # use mariadb for state sharing
+      sessionMode: IN_DB # use database for state sharing
       endSessionEndpoint: "${trustbroker.config.oidc.issuer}/logout"
       sessionLifetimeSec: ${trustbroker.config.sessionLifetimeSec}
       sessionCookie: true # set additional tracking cookie for clients to detect session termination
